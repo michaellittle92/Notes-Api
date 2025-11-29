@@ -5,7 +5,7 @@ namespace Notes_API.Services;
 
 public interface INotesService
 {
-    IEnumerable<Note> GetNotes(bool? showArchived, string? searchTerm, int page, int pageSize);
+    Task<IEnumerable<Note>> GetNotes(bool? showArchived, string? searchTerm, int page, int pageSize);
     Note?  GetNote(int id);
     
     Note CreateNote(CreateNoteRequest request);

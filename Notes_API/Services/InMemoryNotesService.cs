@@ -46,7 +46,7 @@ public class InMemoryNotesService : INotesService
         );
     }
 
-    public IEnumerable<Note> GetNotes(bool? showArchived, string? searchTerm, int page = 1, int pageSize = 10)
+    public async Task<IEnumerable<Note>> GetNotes(bool? showArchived, string? searchTerm, int page = 1, int pageSize = 10)
     {
         //defualts 
         if (page < 1) page = 1;

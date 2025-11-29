@@ -18,13 +18,13 @@ public class NotesController: ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetNotes(
+    public async Task<IActionResult> GetNotes(
         bool? showArchived,
         string? searchTerm,
         int page = 1,
         int size = 10)
     {
-        var notes = _notesService.GetNotes(showArchived, searchTerm, page, size);
+        var notes = await _notesService.GetNotes(showArchived, searchTerm, page, size);
         var responses = notes.Select(n => new NoteResponse
         {
             Id = n.Id,
