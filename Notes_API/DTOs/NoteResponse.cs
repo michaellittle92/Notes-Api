@@ -1,6 +1,6 @@
 namespace Notes_API.Notes;
 
-public class RetrieveNote
+public class NoteResponse
 {
     public int  Id { get; set; }
     public string Title { get; set; }
