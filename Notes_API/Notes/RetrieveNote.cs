@@ -1,6 +1,6 @@
-namespace Notes_API;
+namespace Notes_API.Notes;
 
-public class Note
+public class RetrieveNote
 {
     public int  Id { get; set; }
     public string Title { get; set; }
@@ -9,5 +9,5 @@ public class Note
     public DateTime UpdatedAt { get; set; }
     public bool IsArchived { get; set; }
     public bool IsDeleted { get; set; }
+    
 }
-

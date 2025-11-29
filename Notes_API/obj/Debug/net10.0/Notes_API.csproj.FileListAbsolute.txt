@@ -34,3 +34,4 @@
 /Users/michael/RiderProjects/Notes_API/Notes_API/obj/Debug/net10.0/Notes_API.pdb
 /Users/michael/RiderProjects/Notes_API/Notes_API/obj/Debug/net10.0/Notes_API.genruntimeconfig.cache
 /Users/michael/RiderProjects/Notes_API/Notes_API/obj/Debug/net10.0/ref/Notes_API.dll
+/Users/michael/RiderProjects/Notes_API/Notes_API/obj/Debug/net10.0/Notes_API.sourcelink.json
