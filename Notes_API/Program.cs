@@ -47,9 +47,16 @@ var notesRoute = app.MapGroup("api/notes");
 
 
 // get notes list
-notesRoute.MapGet(string.Empty, (bool? showArchived, string? searchTerm) =>
+notesRoute.MapGet(string.Empty, (bool? showArchived, string? searchTerm, int page =1, int pageSize = 10) =>
 {
-        var activeNotes = notes.Where(n => !n.IsDeleted);
+    //defualts 
+    if (page < 1) page = 1;
+    if (pageSize < 1) pageSize = 10;
+    
+    int maxPageSize = 100;
+    if (pageSize > maxPageSize)  pageSize = maxPageSize;
+    
+    var activeNotes = notes.Where(n => !n.IsDeleted);
 
         if (showArchived is false)
         {
@@ -58,11 +65,27 @@ notesRoute.MapGet(string.Empty, (bool? showArchived, string? searchTerm) =>
         if (!string.IsNullOrEmpty(searchTerm))
         {
             var term =  searchTerm.Trim();
+            
             activeNotes = activeNotes.Where(n =>
                 n.Title.Contains(term, StringComparison.OrdinalIgnoreCase) ||
                 n.Content.Contains(term, StringComparison.OrdinalIgnoreCase));
         }
-        return Results.Ok(activeNotes);
+        
+        //order newest first 
+
+            activeNotes = activeNotes.OrderByDescending(n => n.UpdatedAt); 
+        
+        
+        var totalCount = activeNotes.Count();
+        var totalPages =  (int)Math.Ceiling((double)totalCount / pageSize);
+        
+        var items = activeNotes.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+        var result = new
+        {
+            page, pageSize, totalCount, totalPages, items
+        };
+        return Results.Ok(result);
 });
 
 
