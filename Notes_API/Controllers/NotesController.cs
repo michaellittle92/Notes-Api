@@ -39,30 +39,10 @@ public class NotesController: ControllerBase
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetNote(int id)
+    public async Task<IActionResult> GetNote(int id)
     {
-        var note = _notesService.GetNote(id);
-        if (note == null) return NotFound();
-        var response = new NoteResponse
-        {
-            Id = note.Id,
-            Title = note.Title,
-            Content = note.Content,
-            CreatedAt = note.CreatedAt,
-            UpdatedAt = note.UpdatedAt,
-            IsArchived = note.IsArchived,
-        };
-        return Ok(response);
-    }
-
-    [HttpPost]
-    public IActionResult CreateNote(CreateNoteRequest request)
-    {
-        if (string.IsNullOrWhiteSpace(request.Title))
-        {
-            return BadRequest("Title is required");
-        }
-        var note = _notesService.CreateNote(request);
+        var note =  await _notesService.GetNote(id);
+        if (note is null) return NotFound();
 
         var response = new NoteResponse
         {
@@ -73,37 +53,58 @@ public class NotesController: ControllerBase
             UpdatedAt = note.UpdatedAt,
             IsArchived = note.IsArchived
         };
+            
+            return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateNote(CreateNoteRequest request)
+    {
+        if (request is null) return BadRequest("Request body is required");
+        if (string.IsNullOrWhiteSpace(request.Title)) return BadRequest("Title is required");
+
+        var note = await _notesService.CreateNote(request);
+
+        var response = new NoteResponse
+        {
+            Id = note.Id,
+            Title = note.Title,
+            Content = note.Content,
+            CreatedAt = note.CreatedAt,
+            UpdatedAt = note.UpdatedAt,
+            IsArchived = note.IsArchived
+        };
+        
         return CreatedAtAction(nameof(GetNote), new { id = response.Id }, response);
     }
 
     [HttpPut("{id:int}")]
-    public IActionResult UpdateNote(int id, UpdateNoteRequest request)
+    public async Task<IActionResult> UpdateNote(int id, UpdateNoteRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.Title))
-        {
-            return BadRequest("Title is required");
-        }
+        if (request is null) return BadRequest("Request body is required");
+        if (string.IsNullOrWhiteSpace(request.Title)) return BadRequest("Title is required");
         
-        var updated = _notesService.UpdateNote(id, request);
+        var updated = await _notesService.UpdateNote(id, request);
         if (!updated) return NotFound();
         
         return NoContent();
     }
 
     [HttpDelete("{id:int}")]
-    public IActionResult DeleteNote(int id)
+    public async Task<IActionResult> DeleteNote(int id)
     {
-        var deleted = _notesService.SoftDeleteNote(id);
-        {
-            if (!deleted) return NotFound();
-            return NoContent();
-        }
+        var deleted = await _notesService.SoftDeleteNote(id);
+        
+        if (!deleted) return NotFound();
+        
+        return NoContent();
+        
     }
 
     [HttpPatch("{id:int}/archive")]
-    public IActionResult ToggleArchive(int id)
+    public async Task<IActionResult> ToggleArchive(int id)
     {
-        var ok = _notesService.ToggleArchive(id);
+        var ok = await _notesService.ToggleArchive(id);
         if (!ok) return NotFound();
         return NoContent();
     }

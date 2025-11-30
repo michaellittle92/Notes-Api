@@ -81,12 +81,12 @@ public class InMemoryNotesService : INotesService
         return activeNotes.ToList();
     }
 
-    public Note? GetNote(int id)
-    {
+    public async Task<Note?> GetNote(int id)
+    { 
         return _notes.FirstOrDefault(n => n.Id == id && n.IsDeleted == false);
     }
 
-    public Note CreateNote(CreateNoteRequest request)
+    public async Task<Note> CreateNote(CreateNoteRequest request)
     {
         var now = DateTime.Now;
 
@@ -105,7 +105,7 @@ public class InMemoryNotesService : INotesService
         return note;
     }
 
-    public bool UpdateNote(int id, UpdateNoteRequest request)
+    public async Task <bool> UpdateNote(int id, UpdateNoteRequest request)
     {
         var note = _notes.FirstOrDefault(n => n.Id == id && !n.IsDeleted);
         if (note is null) return false;
@@ -118,7 +118,7 @@ public class InMemoryNotesService : INotesService
     }
     
 
-    public bool SoftDeleteNote(int id)
+    public async Task<bool> SoftDeleteNote(int id)
     {
         var note = _notes.FirstOrDefault(n => n.Id == id && !n.IsDeleted);
         if (note is null) return false;
@@ -128,7 +128,7 @@ public class InMemoryNotesService : INotesService
         return true;
     }
 
-    public bool ToggleArchive(int id)
+    public async Task<bool> ToggleArchive(int id)
     {
         var note = _notes.FirstOrDefault(n => n.Id == id && !n.IsDeleted);
         if (note is null) return false;

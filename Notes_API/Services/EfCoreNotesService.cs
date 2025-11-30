@@ -38,28 +38,66 @@ public class EfCoreNotesService : INotesService
         return await notes.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
     }
 
-    public Note? GetNote(int id)
+    public async Task<Note?> GetNote(int id)
     {
-        throw new NotImplementedException();
+        return await _db.Notes
+            .Where(n => !n.IsDeleted && n.Id == id)
+            .FirstOrDefaultAsync();
     }
 
-    public Note CreateNote(CreateNoteRequest request)
+
+    public async Task<Note> CreateNote(CreateNoteRequest request)
     {
-        throw new NotImplementedException();
+        var now = DateTime.Now;
+
+        var note = new Note
+        {
+            Title = request.Title.Trim(),
+            Content = request.Content,
+            CreatedAt = now,
+            UpdatedAt = now,
+            IsDeleted = false,
+            IsArchived = false
+
+        };
+        _db.Notes.Add(note);
+        await _db.SaveChangesAsync();
+        return note;
     }
 
-    public bool UpdateNote(int id, UpdateNoteRequest request)
+    public async Task<bool> UpdateNote(int id, UpdateNoteRequest request)
     {
-        throw new NotImplementedException();
+       var note = await _db.Notes.FirstOrDefaultAsync(n => n.Id == id);
+       if (note is null) return false;
+       
+       note.Title = request.Title.Trim();
+       note.Content = request.Content.Trim() ??  string.Empty;
+       note.UpdatedAt = DateTime.Now;
+       
+       await _db.SaveChangesAsync();
+       return true;
     }
 
-    public bool SoftDeleteNote(int id)
+    public async Task<bool> SoftDeleteNote(int id)
     {
-        throw new NotImplementedException();
+        var note = await _db.Notes.FirstOrDefaultAsync(n => n.Id == id && !n.IsDeleted);
+        if (note is null) return false;
+        
+        note.IsDeleted = true;
+        note.UpdatedAt = DateTime.Now;
+        
+        await _db.SaveChangesAsync();
+        return true;
     }
 
-    public bool ToggleArchive(int id)
+    public async Task<bool> ToggleArchive(int id)
     {
-        throw new NotImplementedException();
+        var note = await _db.Notes.FirstOrDefaultAsync(n => n.Id == id && !n.IsArchived);
+        if (note is null) return false; 
+        note.IsArchived = !note.IsArchived;
+        note.UpdatedAt = DateTime.Now;
+        
+        await _db.SaveChangesAsync();
+        return true;
     }
 }

@@ -6,10 +6,10 @@ namespace Notes_API.Services;
 public interface INotesService
 {
     Task<IEnumerable<Note>> GetNotes(bool? showArchived, string? searchTerm, int page, int pageSize);
-    Note?  GetNote(int id);
+    Task<Note?>  GetNote(int id);
     
-    Note CreateNote(CreateNoteRequest request);
-    bool UpdateNote(int id, UpdateNoteRequest request);
-    bool SoftDeleteNote(int id);
-    bool ToggleArchive(int id);
+    Task<Note> CreateNote(CreateNoteRequest request);
+    Task<bool> UpdateNote(int id, UpdateNoteRequest request);
+   Task<bool> SoftDeleteNote(int id);
+    Task<bool> ToggleArchive(int id);
 }
