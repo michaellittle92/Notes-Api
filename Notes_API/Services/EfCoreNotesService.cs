@@ -20,7 +20,7 @@ public class EfCoreNotesService : INotesService
         int maxPageSize = 100;
         if (pageSize > maxPageSize) pageSize = maxPageSize;
         
-        var notes = _db.Notes.Where(n => !n.IsArchived);
+        var notes = _db.Notes.Where(n => !n.IsDeleted);
         
         if (showArchived is false)
         {
